@@ -330,8 +330,8 @@ Seus dados estão seguros. Sem spam.</p>
       body:JSON.stringify(dados)
     }).then(function(r){
       if(!r.ok) throw new Error(r.status);
-      if(window.bzLead) window.bzLead(dados);
-      obrigado();
+      try{sessionStorage.setItem('bz_lead',JSON.stringify({email:dados.email,whatsapp:dados.whatsapp,funcionarios:dados.funcionarios,origem:dados.origem,utm:dados.utm}));}catch(e){}
+      location.href='obrigado.html';
     }).catch(function(){
       erro.textContent='Não foi possível enviar agora. Tente de novo em instantes.';
       erro.hidden=false; btn.disabled=false; btn.textContent=txt;
@@ -453,17 +453,6 @@ Seus dados estão seguros. Sem spam.</p>
     fb('trackCustom','FormError',{campo:e.target.name||'desconhecido'});
   },true);
 
-  // Chamado após inscrição confirmada no Supabase
-  window.bzLead=async function(d){
-    var ph=d.whatsapp? '55'+d.whatsapp.replace(/\D/g,'') : '';
-    var em=await sha(d.email);
-    var phh=await sha(ph);
-    fb('init',PIXEL,{em:em||undefined, ph:phh||undefined});
-    var params={content_name:'Blindagem Empresarial 2027', funcionarios:d.funcionarios||'', origem:d.origem||'', status:true};
-    fb('track','Lead',params);
-    fb('track','CompleteRegistration',params);
-    fb('trackCustom','InscricaoConfirmada',Object.assign({}, params, d.utm||{}));
-  };
 })();
 </script>
 </body>
