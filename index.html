@@ -330,7 +330,7 @@ Seus dados estão seguros. Sem spam.</p>
       body:JSON.stringify(dados)
     }).then(function(r){
       if(!r.ok) throw new Error(r.status);
-      try{sessionStorage.setItem('bz_lead',JSON.stringify({email:dados.email,whatsapp:dados.whatsapp,funcionarios:dados.funcionarios,origem:dados.origem,utm:dados.utm}));}catch(e){}
+      try{sessionStorage.setItem('bz_lead',JSON.stringify({nome:dados.nome,email:dados.email,whatsapp:dados.whatsapp,funcionarios:dados.funcionarios,origem:dados.origem,utm:dados.utm}));}catch(e){}
       location.href='obrigado.html';
     }).catch(function(){
       erro.textContent='Não foi possível enviar agora. Tente de novo em instantes.';
