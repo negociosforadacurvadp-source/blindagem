@@ -70,6 +70,18 @@ details p{animation:bzFade .3s ease}
 @keyframes bzNudge{0%,100%{transform:translateY(0);box-shadow:0 0 0 0 rgba(34,211,238,0)}50%{transform:translateY(-3px) scale(1.02);box-shadow:0 10px 28px rgba(34,211,238,.45),0 0 0 4px rgba(34,211,238,.25)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}.bz-reveal{opacity:1;transform:none}}
 </style>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1509875777101544');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1509875777101544&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
 </head>
 <body>
 <div id="bz-page" style="width: 100%; min-height: 100vh; background: #070B14; color: #F5F7FB; font-family: Inter, system-ui, sans-serif; font-size: 16px; line-height: 1.6">
@@ -318,6 +330,7 @@ Seus dados estão seguros. Sem spam.</p>
       body:JSON.stringify(dados)
     }).then(function(r){
       if(!r.ok) throw new Error(r.status);
+      if(window.bzLead) window.bzLead(dados);
       obrigado();
     }).catch(function(){
       erro.textContent='Não foi possível enviar agora. Tente de novo em instantes.';
@@ -397,6 +410,60 @@ Seus dados estão seguros. Sem spam.</p>
   function ativo(){document.body.classList.remove('bz-idle');clearTimeout(t);t=setTimeout(function(){document.body.classList.add('bz-idle');},4000);}
   ['scroll','mousemove','touchstart','keydown','pointerdown'].forEach(function(ev){window.addEventListener(ev,ativo,{passive:true});});
   ativo();
+})();
+</script>
+<script>
+/* Rastreamento: Meta Pixel (eventos padrão + personalizados + advanced matching) */
+(function(){
+  var PIXEL='1509875777101544';
+  function fb(){ if(window.fbq) fbq.apply(null, arguments); }
+  var enc=new TextEncoder();
+  async function sha(v){
+    if(!v||!window.crypto||!crypto.subtle) return null;
+    var buf=await crypto.subtle.digest('SHA-256', enc.encode(String(v).trim().toLowerCase()));
+    return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+  }
+  // Visualização da página
+  fb('track','ViewContent',{content_name:'Blindagem Empresarial 2027',content_category:'Aula ao vivo gratuita'});
+
+  // Profundidade de rolagem (25/50/75/100%)
+  var marcos=[25,50,75,100], feitos={};
+  window.addEventListener('scroll',function(){
+    var h=document.documentElement;
+    var pct=Math.round((h.scrollTop+window.innerHeight)/h.scrollHeight*100);
+    marcos.forEach(function(m){ if(pct>=m && !feitos[m]){ feitos[m]=1; fb('trackCustom','ScrollDepth',{percent:m}); } });
+  },{passive:true});
+
+  // Tempo na página (30s, 60s, 120s)
+  [30,60,120].forEach(function(s){ setTimeout(function(){ fb('trackCustom','TimeOnPage',{seconds:s}); }, s*1000); });
+
+  // Cliques em botões de chamada para ação
+  document.querySelectorAll('a[href="#inscricao"], .bz-cta').forEach(function(el){
+    el.addEventListener('click',function(){ fb('trackCustom','CTAClick',{label:(el.textContent||'').trim().slice(0,80)}); });
+  });
+
+  // Início do preenchimento do formulário (primeiro campo em foco)
+  var form=document.getElementById('bz-form'), iniciou=false;
+  if(form) form.addEventListener('focusin',function(){
+    if(!iniciou){ iniciou=true; fb('trackCustom','FormStart'); }
+  });
+
+  // Erros de validação do formulário
+  if(form) form.addEventListener('invalid',function(e){
+    fb('trackCustom','FormError',{campo:e.target.name||'desconhecido'});
+  },true);
+
+  // Chamado após inscrição confirmada no Supabase
+  window.bzLead=async function(d){
+    var ph=d.whatsapp? '55'+d.whatsapp.replace(/\D/g,'') : '';
+    var em=await sha(d.email);
+    var phh=await sha(ph);
+    fb('init',PIXEL,{em:em||undefined, ph:phh||undefined});
+    var params={content_name:'Blindagem Empresarial 2027', funcionarios:d.funcionarios||'', origem:d.origem||'', status:true};
+    fb('track','Lead',params);
+    fb('track','CompleteRegistration',params);
+    fb('trackCustom','InscricaoConfirmada',Object.assign({}, params, d.utm||{}));
+  };
 })();
 </script>
 </body>
