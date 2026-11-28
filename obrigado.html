@@ -145,7 +145,7 @@ fbq('track','PageView');
     if(h[0]) um.em=h[0];
     if(h[1]) um.ph=h[1];
     if(Object.keys(um).length) fb('init',PIXEL,um);
-    var params={content_name:'Blindagem Empresarial 2027', funcionarios:d.funcionarios||'', origem:d.origem||'', status:true};
+    var params={content_name:'Blindagem Empresarial 2027', faturamento:d.faturamento||'', origem:d.origem||'', status:true};
     fb('track','Lead',params);
     fb('track','CompleteRegistration',params);
     fb('trackCustom','InscricaoConfirmada',Object.assign({}, params, d.utm||{}));

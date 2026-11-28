@@ -155,14 +155,14 @@ fbq('track','PageView');
 <input id="bz-empresa" class="bz-input" type="text" name="empresa" autocomplete="organization" required="required" maxlength="200" placeholder="Ex.: Loja X · moda" />
 </div>
 <div style="display: flex; flex-direction: column; gap: 4px">
-<label style="font-size: 13px; font-weight: 600" for="bz-func">Nº de funcionários</label>
-<select id="bz-func" class="bz-input" name="funcionarios" required="required">
+<label style="font-size: 13px; font-weight: 600" for="bz-fat">Faturamento mensal</label>
+<select id="bz-fat" class="bz-input" name="faturamento" required="required">
 <option value="">Escolha</option>
-<option>Só eu</option>
-<option>2 a 5</option>
-<option>6 a 20</option>
-<option>21 a 50</option>
-<option>Mais de 50</option>
+<option>Até 30 mil</option>
+<option>30 a 100 mil</option>
+<option>100 a 300 mil</option>
+<option>300 mil a 1 milhão</option>
+<option>Acima de 1 milhão</option>
 </select>
 </div>
 </div>
@@ -318,7 +318,7 @@ Seus dados estão seguros. Sem spam.</p>
       empresa:(f.get('empresa')||'').trim(),
       preocupacao:f.get('preocupacao')||null,
       email:(f.get('email')||'').trim().toLowerCase(),
-      funcionarios:f.get('funcionarios')||null,
+      faturamento:f.get('faturamento')||null,
       origem:p.get('convite')==='1'?'comercial':'pagina',
       utm:utm
     };
@@ -330,7 +330,7 @@ Seus dados estão seguros. Sem spam.</p>
       body:JSON.stringify(dados)
     }).then(function(r){
       if(!r.ok) throw new Error(r.status);
-      try{sessionStorage.setItem('bz_lead',JSON.stringify({nome:dados.nome,email:dados.email,whatsapp:dados.whatsapp,funcionarios:dados.funcionarios,origem:dados.origem,utm:dados.utm}));}catch(e){}
+      try{sessionStorage.setItem('bz_lead',JSON.stringify({nome:dados.nome,email:dados.email,whatsapp:dados.whatsapp,faturamento:dados.faturamento,origem:dados.origem,utm:dados.utm}));}catch(e){}
       location.href='obrigado.html';
     }).catch(function(){
       erro.textContent='Não foi possível enviar agora. Tente de novo em instantes.';
